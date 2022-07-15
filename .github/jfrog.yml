@@ -1,0 +1,51 @@
+name: Docker image to Jfrog
+
+
+on:
+workflow_dispatch:
+
+env:
+IMAGE_NAME:  ${{github.repository}}: ${{github.run_number}} {%%endraw}
+
+
+jobs:
+build:
+runs-on:ubuntu-latest
+
+steps;
+- uses: actions/checkout@v3
+- name: set up NodeJs server
+   uses: actions/setup-node@v3
+   with:
+   node-version: '16'
+   distribution: 'adopt'
+
+- name: 
+
+
+
+
+-name: docker login to Jfrog
+ run: {% raw %} echo  ${{secrest.JFROG_API_KEY}} {%endraw%} | docker login -u${{values.jfrog_usernam}} --password-stdin ${{values.jfrog_domain}}
+
+
+
+ - name: docker push Image to Jfrog
+  run : docker push ${{values.jfrog_domain}}/${{values.jfrog_reponam}}/$IMAGE_NAME
+
+
+-  name: docker logout
+   run: docker logout
+
+  - uses: 
+  with:
+  creds: {% raw %} ${{secrets.AZURE}} {%endraw%}
+  cluster-name:herp
+  resource-group: statusneo
+
+  - name: Kubernetes Deployment
+    uses: azure/K8s-deploy@v1
+    with:
+    mainfest : |
+    kubernetes.yaml
+    namespace: default
